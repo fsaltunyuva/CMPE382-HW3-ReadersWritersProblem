@@ -13,8 +13,9 @@
 // Function declarations
 void* reader_thread(void* arg);
 void* writer_thread(void* arg);
-void generate_passwords(int passwords[]);
+void generate_passwords(int passwords[], int size);
 int generate_random_password();
+int is_valid_password(int password, int passwords[], int size);
 
 // Data structure to pass arguments to threads
 typedef struct {
@@ -33,19 +34,20 @@ sem_t mutex, write_lock;
 int main() {
     pthread_t readers[NUM_READERS]; // Reader threads
     pthread_t writers[NUM_WRITERS]; // Writer threads
-    pthread_t dummy_readers[NUM_READERS];
-    pthread_t dummy_writers[NUM_WRITERS];
+    pthread_t dummy_readers[NUM_READERS]; // Dummy reader threads
+    pthread_t dummy_writers[NUM_WRITERS]; // Dummy writer threads
+
     thread_data reader_data[NUM_READERS]; // Data for reader threads
     thread_data writer_data[NUM_WRITERS]; // Data for writer threads
-    thread_data dummy_reader_data[NUM_READERS];
-    thread_data dummy_writer_data[NUM_WRITERS];
+    thread_data dummy_reader_data[NUM_READERS]; // Data for dummy reader threads
+    thread_data dummy_writer_data[NUM_WRITERS]; // Data for dummy writer threads
 
     // Initialize semaphores
     sem_init(&mutex, 0, 1); // Binary semaphore
     sem_init(&write_lock, 0, 1); // Write lock
 
     int passwords[NUM_PASSWORDS]; // Array to store passwords
-    generate_passwords(passwords); // Generate random passwords
+    generate_passwords(passwords, NUM_PASSWORDS); // Generate random passwords
 
     // Create reader threads
     for (int i = 0; i < NUM_READERS; i++) {
@@ -68,7 +70,7 @@ int main() {
         int dummy_password;
         do {
             dummy_password = generate_random_password();
-        } while (dummy_password == passwords[i]);
+        } while (is_valid_password(dummy_password, passwords, NUM_PASSWORDS));
 
         dummy_reader_data[i].thread_id = i + 1;
         dummy_reader_data[i].password = dummy_password;
@@ -81,7 +83,7 @@ int main() {
         int dummy_password;
         do {
             dummy_password = generate_random_password();
-        } while (dummy_password == passwords[NUM_READERS + i]);
+        } while (is_valid_password(dummy_password, passwords, NUM_PASSWORDS));
 
         dummy_writer_data[i].thread_id = i + 1;
         dummy_writer_data[i].password = dummy_password;
@@ -96,29 +98,43 @@ int main() {
     for (int i = 0; i < NUM_WRITERS; i++) {
         pthread_join(writers[i], NULL);
     }
+    for (int i = 0; i < NUM_READERS; i++) {
+        pthread_join(dummy_readers[i], NULL);
+    }
+    for (int i = 0; i < NUM_WRITERS; i++) {
+        pthread_join(dummy_writers[i], NULL);
+    }
+
+    sem_destroy(&mutex);
+    sem_destroy(&write_lock);
 
     return 0;
 }
 
 void* reader_thread(void* arg) {
     thread_data* data = (thread_data*)arg; // Get thread data
-    printf("Reader %d with password %d started.\n", data->thread_id, data->password);
+    printf("Reader %d (dummy: %d) with password %d started.\n", data->thread_id, data->is_dummy, data->password);
 
-    sem_wait(&mutex); // Lock the mutex
-    read_count++; // Increment the read count
-    if (read_count == 1) { // If this is the first reader
-        sem_wait(&write_lock); // Lock the write lock
+    if (!data->is_dummy) {
+        sem_wait(&mutex); // Lock the mutex
+        read_count++; // Increment the read count
+        if (read_count == 1) { // If this is the first reader
+            sem_wait(&write_lock); // Lock the write lock
+        }
+        sem_post(&mutex); // Unlock the mutex
+
+        // Read operation
+
+        sem_wait(&mutex); // Lock the mutex
+        read_count--; // Decrement the read count
+        if (read_count == 0) { // If this is the last reader
+            sem_post(&write_lock); // Unlock the write lock
+        }
+        sem_post(&mutex); // Unlock the mutex
     }
-    sem_post(&mutex); // Unlock the mutex
-
-    // Read operation
-
-    sem_wait(&mutex); // Lock the mutex
-    read_count--; // Decrement the read count
-    if (read_count == 0) { // If this is the last reader
-        sem_post(&write_lock); // Unlock the write lock
+    else {
+        printf("Dummy Reader %d attempted to read with invalid password %d.\n", data->thread_id, data->password);
     }
-    sem_post(&mutex); // Unlock the mutex
 
     sleep(1);
     return NULL;
@@ -126,25 +142,40 @@ void* reader_thread(void* arg) {
 
 void* writer_thread(void* arg) {
     thread_data* data = (thread_data*)arg; // Get thread data
-    printf("Writer %d with password %d started.\n", data->thread_id, data->password);
+    printf("Writer %d (dummy: %d) with password %d started.\n", data->thread_id, data->is_dummy, data->password);
 
-    sem_wait(&write_lock); // Lock the write lock
+    if (!data->is_dummy) {
+        sem_wait(&write_lock); // Lock the write lock
 
-    // Write operation
+        // Write operation
 
-    sem_post(&write_lock); // Unlock the write lock
+        sem_post(&write_lock); // Unlock the write lock
+    }
+    else {
+        printf("Dummy Writer %d attempted to write with invalid password %d.\n", data->thread_id, data->password);
+    }
 
     sleep(1);
     return NULL;
 }
 
-void generate_passwords(int passwords[]) { // Generate random passwords
-    for (int i = 0; i < NUM_PASSWORDS; i++) {
+void generate_passwords(int passwords[], int size) { // Generate random passwords
+    for (int i = 0; i < size; i++) {
         passwords[i] = generate_random_password();
     }
 }
 
 int generate_random_password() { // Generate a random 6-digit password
     return rand() % 900000 + 100000;
+}
+
+// Function to check if a password is valid
+int is_valid_password(int password, int passwords[], int size) {
+    for (int i = 0; i < size; i++) {
+        if (passwords[i] == password) {
+            return 1;
+        }
+    }
+    return 0;
 }
 
