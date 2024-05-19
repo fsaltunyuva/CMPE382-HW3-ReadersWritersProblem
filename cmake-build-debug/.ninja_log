@@ -1,3 +1,7 @@
 # ninja log v5
 1	23	1716131144224003500	CMakeFiles/CMPE382_HW3_ReadersWritersProblem.dir/main.c.o	2aac65b2ac374db9
 24	46	1716131144248002490	CMPE382_HW3_ReadersWritersProblem	b90a6d929ebb1eaa
+3	48	1716134989117273524	CMakeFiles/CMPE382_HW3_ReadersWritersProblem.dir/main.c.o	2aac65b2ac374db9
+48	68	1716134989137275476	CMPE382_HW3_ReadersWritersProblem	b90a6d929ebb1eaa
+0	27	1716135081707555256	CMakeFiles/CMPE382_HW3_ReadersWritersProblem.dir/main.c.o	2aac65b2ac374db9
+27	42	1716135081723555965	CMPE382_HW3_ReadersWritersProblem	b90a6d929ebb1eaa
