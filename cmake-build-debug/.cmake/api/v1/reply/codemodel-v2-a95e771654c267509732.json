@@ -1,0 +1,60 @@
+{
+	"configurations" : 
+	[
+		{
+			"directories" : 
+			[
+				{
+					"build" : ".",
+					"jsonFile" : "directory-.-Debug-f5ebdc15457944623624.json",
+					"minimumCMakeVersion" : 
+					{
+						"string" : "3.28"
+					},
+					"projectIndex" : 0,
+					"source" : ".",
+					"targetIndexes" : 
+					[
+						0
+					]
+				}
+			],
+			"name" : "Debug",
+			"projects" : 
+			[
+				{
+					"directoryIndexes" : 
+					[
+						0
+					],
+					"name" : "CMPE382_HW3_ReadersWritersProblem",
+					"targetIndexes" : 
+					[
+						0
+					]
+				}
+			],
+			"targets" : 
+			[
+				{
+					"directoryIndex" : 0,
+					"id" : "CMPE382_HW3_ReadersWritersProblem::@6890427a1f51a3e7e1df",
+					"jsonFile" : "target-CMPE382_HW3_ReadersWritersProblem-Debug-ea20754963ed86248311.json",
+					"name" : "CMPE382_HW3_ReadersWritersProblem",
+					"projectIndex" : 0
+				}
+			]
+		}
+	],
+	"kind" : "codemodel",
+	"paths" : 
+	{
+		"build" : "/home/furkan/Desktop/CMPE382/HW3/CMPE382-HW3-ReadersWritersProblem/cmake-build-debug",
+		"source" : "/home/furkan/Desktop/CMPE382/HW3/CMPE382-HW3-ReadersWritersProblem"
+	},
+	"version" : 
+	{
+		"major" : 2,
+		"minor" : 6
+	}
+}
