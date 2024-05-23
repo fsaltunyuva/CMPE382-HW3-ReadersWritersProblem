@@ -130,6 +130,7 @@ void* reader_thread(void* arg) {
 
     for (int i = 0; i < NUM_OPERATIONS; i++) {
         if (is_correct_password(data->thread_id, data->password, data->is_writer)) {
+            sleep(1); // Simulate reading
             sem_wait(&mutex); // Lock the mutex
             read_count++; // Increment the read count
             if (read_count == 1) { // If this is the first reader
@@ -138,7 +139,6 @@ void* reader_thread(void* arg) {
             sem_post(&mutex); // Unlock the mutex
 
             // Read operation
-            sleep(1); // Simulate reading
             printf("Reader %d (dummy: %d) read %d from the buffer.\n", data->thread_id, data->is_dummy, BUFFER);
 
             sem_wait(&mutex); // Lock the mutex
@@ -162,13 +162,13 @@ void* writer_thread(void* arg) {
 
     for (int i = 0; i < NUM_OPERATIONS; i++) {
         if (is_correct_password(data->thread_id, data->password, data->is_writer)) {
+            sleep(1); // Simulate writing
             sem_wait(&write_lock); // Lock the write lock
 
             // Write operation
-            sleep(1); // Simulate writing
             int random_integer = generate_random_integer(); // Generate a random integer
             BUFFER = random_integer; // Write the random integer to the buffer
-            printf("Writer %d (dummy: %d) wrote %d to the buffer.\n", data->thread_id,data->thread_id, BUFFER);
+            printf("Writer %d (dummy: %d) wrote %d to the buffer.\n", data->thread_id,data->is_dummy, BUFFER);
 
             sem_post(&write_lock); // Unlock the write lock
         } else {
