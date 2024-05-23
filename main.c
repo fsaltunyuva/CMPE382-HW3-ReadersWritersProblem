@@ -56,6 +56,8 @@ int main() {
 
     generate_passwords(passwords, NUM_PASSWORDS); // Generate random passwords
 
+    printf("%d real reader threads and %d real writer threads (with additional %d dummy reader threads and %d dummy writer threads).\n", NUM_READERS, NUM_WRITERS, NUM_READERS, NUM_WRITERS);
+
     // Create writer threads
     for (int i = 0; i < NUM_WRITERS; i++) {
         writer_data[i].thread_id = i; // Assign thread ID
