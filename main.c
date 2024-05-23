@@ -48,7 +48,7 @@ int main() {
 
     thread_data reader_data[NUM_READERS]; // Data for reader threads
     thread_data writer_data[NUM_WRITERS]; // Data for writer threads
-    thread_data dummy_reader_data[NUM_READERS]; // Data for dummy reader threads
+    thread_data dummy_reader_data[NUM_READERS]; // Data for dummy reader threadss
     thread_data dummy_writer_data[NUM_WRITERS]; // Data for dummy writer threads
 
     // Initialize semaphores
@@ -126,7 +126,7 @@ int main() {
 void* reader_thread(void* arg) {
     thread_data* data = (thread_data*)arg; // Get thread data
 
-    printf("Reader %d (dummy: %d) with password %d started.\n", data->thread_id, data->is_dummy, data->password);
+    //printf("Reader %d (dummy: %d) with password %d started.\n", data->thread_id, data->is_dummy, data->password);
 
     for (int i = 0; i < NUM_OPERATIONS; i++) {
         if (is_correct_password(data->thread_id, data->password, data->is_writer)) {
@@ -139,7 +139,7 @@ void* reader_thread(void* arg) {
 
             // Read operation
             sleep(1); // Simulate reading
-            printf("Reader %d read %d from the buffer.\n", data->thread_id, BUFFER);
+            printf("Reader %d (dummy: %d) read %d from the buffer.\n", data->thread_id, data->is_dummy, BUFFER);
 
             sem_wait(&mutex); // Lock the mutex
             read_count--; // Decrement the read count
@@ -158,7 +158,7 @@ void* reader_thread(void* arg) {
 void* writer_thread(void* arg) {
     thread_data* data = (thread_data*)arg; // Get thread data
 
-    printf("Writer %d (dummy: %d) with password %d started.\n", data->thread_id, data->is_dummy, data->password);
+    //printf("Writer %d (dummy: %d) with password %d started.\n", data->thread_id, data->is_dummy, data->password);
 
     for (int i = 0; i < NUM_OPERATIONS; i++) {
         if (is_correct_password(data->thread_id, data->password, data->is_writer)) {
@@ -168,7 +168,7 @@ void* writer_thread(void* arg) {
             sleep(1); // Simulate writing
             int random_integer = generate_random_integer(); // Generate a random integer
             BUFFER = random_integer; // Write the random integer to the buffer
-            printf("Writer %d wrote %d to the buffer.\n", data->thread_id, BUFFER);
+            printf("Writer %d (dummy: %d) wrote %d to the buffer.\n", data->thread_id,data->thread_id, BUFFER);
 
             sem_post(&write_lock); // Unlock the write lock
         } else {
@@ -205,7 +205,7 @@ int is_correct_password(int thread_id, int password, int is_writer) {
 int get_correct_password(int thread_id, int is_writer) {
     if (is_writer) {
         int writer_id = thread_id % NUM_WRITERS;
-        return passwords[NUM_READERS + writer_id];
+        return passwords[NUM_READERS + writer_id]; // Adding the
     } else {
         int reader_id = thread_id % NUM_READERS;
         return passwords[reader_id];
