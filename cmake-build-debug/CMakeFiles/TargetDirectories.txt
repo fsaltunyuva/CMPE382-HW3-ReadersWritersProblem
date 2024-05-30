@@ -1,3 +1,0 @@
-/home/furkan/Desktop/CMPE382/HW3/CMPE382-HW3-ReadersWritersProblem/cmake-build-debug/CMakeFiles/CMPE382_HW3_ReadersWritersProblem.dir
-/home/furkan/Desktop/CMPE382/HW3/CMPE382-HW3-ReadersWritersProblem/cmake-build-debug/CMakeFiles/edit_cache.dir
-/home/furkan/Desktop/CMPE382/HW3/CMPE382-HW3-ReadersWritersProblem/cmake-build-debug/CMakeFiles/rebuild_cache.dir
